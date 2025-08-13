@@ -270,8 +270,7 @@ else
     exit 1
 fi
 
-# Add logic to only record up to the end of the hour
 # Cancelling with xdpdump may corrupt the pcap file. Handle this
-# 
 
-# ip -s link vs ifconfig vs ethtool vs /sys/class/net/<interface>/statistics/*
+# add some notes for ip -s link vs ifconfig vs ethtool
+# vs /sys/class/net/<interface>/statistics/*
