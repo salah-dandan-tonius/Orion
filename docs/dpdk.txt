@@ -1,0 +1,49 @@
+- Hugepage support is required, which can be configured at runtime
+  with dpdk-hugepages.py . It is recommended to use 1GB hugepages
+  if possible.
+  
+- It is recommended that vfio-pci be used as the kernel module for
+  DPDK-bound ports in all cases. If an IOMMU is unavailable, the
+  vfio-pci can be used in no-iommu mode. Device binding and unbinding
+  can be used with dpdk-devbind.py . To bind a device to vfio-pci, you
+  can do: "dpdk-devbind.py --bind=vfio-pci <iface>|<pci_addr> . To make
+  use of the VFIO, vfio-pci module must be loaded with "modprobe vfio-pci".
+  In most cases, specifying "iommu=on" as a kernel parameter should be
+  enough.
+  - https://doc.dpdk.org/guides/linux_gsg/linux_drivers.html
+  - https://doc.dpdk.org/guides/linux_gsg/linux_drivers.html#vfio-noiommu
+
+- Before running a sample application, make sure:
+  - Hugepages setup is done
+  - Any kernel driver being used is loaded
+  - Ports being used should be bound to the corresponding kernel driver
+
+- All sample applications share the same EAL parameters
+  - https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html
+  
+- librte_pdump allows users to initialize the packet capture framework
+  and enable or disable packet capture. librte_pcapng provides the API
+  to format packets and write them to a file in pcapng format.
+- dpdk-dumpcap captures packets like wireshark and runs as a dpdk
+  secondary process and writes to pcapng format files. dpdk-testpmd
+  can be used to initialize the packet capture framework and acts as
+  a server, whereas dpdk-dumpcap acts as a client.
+  
+- application command-line options must be separation from the EAL
+  options with "--"
+  - https://doc.dpdk.org/guides/testpmd_app_ug/run_app.html
+  
+- testpmd command-line options:
+  - -i : interactive mode with a prompt
+  - 
+
+- IMPORTANT!!!!!!
+  - For best performance on intel platforms, consider doing the following:
+    - Reserve 1GB hugepages (default_hugepagesz=1G hugepagesz=1G hugepages=8)
+    - Isolate CPU cores which will be used for DPDK (isolcpus=2,3,4,5,6,7,8)
+    - If using vfio, (iommu=pt intel_iommu=on)
+  - https://docs.kernel.org/admin-guide/kernel-parameters.html
+  
+- SHOULD YOU USE AVX WITH DPDK?
+
+NO VFIO BINDING WITH MELLANOX CARDS!!!!!!

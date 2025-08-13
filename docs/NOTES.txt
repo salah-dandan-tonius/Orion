@@ -1,0 +1,11 @@
+-----------------------------------------------------------------------------------------------------------------
+CHANGES:
+
+- Created /var/log/pcapture and /var/log/pcaps
+- Installed dpdk and dpdk-dev
+- Changed 0 to 512 in /proc/sys/vm/nr_hugepages
+- Installed "stress" package
+-----------------------------------------------------------------------------------------------------------------
+REFERENCES:
+
+- /sys/class/net/$IFACE/statistics/* : https://github.com/torvalds/linux/blob/master/Documentation/ABI/testing/sysfs-class-net-statistics
