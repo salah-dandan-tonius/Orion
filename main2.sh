@@ -45,9 +45,17 @@ check_iface() {
     exit 1
 }
 
-#???
+#??? fill in later
 sanity_check() {
 
+}
+
+rotate_xdpdump() {
+    while true; do
+        local out_file="$PCAP_DIR/$(date +'%Y-%m-%d.%H').pcap"
+        timeout 3600 xdpdump -i "$IFACE" --use-pcap -w "$out_file" &>/dev/null
+        log "xdpdump finished or timed out. Rotating..."
+    done
 }
 
 #=== Argument Parsing ===#
@@ -118,3 +126,31 @@ if [[ "$SERVE" == true ]]; then
     echo "Serving $LOG_FILE on http://localhost:$PORT/"
     (cd "$(dirname "$LOG_FILE")" && python3 -m http.server "$PORT")
 fi
+
+#???
+capture() {
+    case "$TOOL" in
+        legacy)
+            bin/legacy -u -i "$IFACE" -s "$PCAP_DIR" &
+            ;;
+        tcpdump)
+            tcpdump -i "$IFACE" -G 3600 -w "$PCAP_DIR/%Y-%m-%d.%H.pcap" -nn -U &>/dev/null &
+            ;;
+        tcpdump-pfring)
+            bin/tcpdump-pfring -i "$IFACE" -G 3600 -w "$PCAP_DIR/%Y-%m-%d.%H.pcap" -nn -U &>/dev/null &
+            ;;
+        xdpdump)
+            xdp-loader load -m skb -s xdp "$IFACE" bin/xdp_pass.o
+            rotate_xdpdump &
+            ;;
+        netsniff-ng)
+            netsniff-ng -i "$IFACE" -o "$PCAP_DIR/%Y-%m-%d.%H.pcap" --interval 1hrs --prio-high --silent &>/dev/null &
+            ;;
+        *)
+            log "Error: Unsupported tool $TOOL"
+            exit 1
+            ;;
+
+        
+}
+
