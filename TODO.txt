@@ -1,0 +1,10 @@
+- Upon first run, it should:
+    - Check if the file corresponding to the current strftime exists
+    - It it does, check if its a valid pcap file, log, and create a new file
+    - If not, resume recording
+
+- Collection will only resume until the end of the actual hour, not 1hr after being ran
+- Every specified interval of time, statistics will be collected and logged (IO, errors, etc)
+- There is a flag to serve the log file on http for monitoring without interference
+- There is a flag to control the snapshot length
+- There is a flag to decide whether or not the output is piped to gzip (it is by default)
