@@ -1,0 +1,8 @@
+MATCHING_FILE=$(ls "$PCAP_DIR"/"$CURRENT_TIME"* 2>/dev/null | head -n 1) || true
+
+if [[ -n "$MATCHING_FILE" ]]; then
+    echo "Found existing file for current hour: $MATCHING_FILE"
+else
+    echo "Not found"
+fi
+

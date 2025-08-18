@@ -66,3 +66,19 @@ if ! ip link show "$IFACE" &>/dev/null; then
     exit 1
 fi
 
+#=============================================================================
+PCAP_DIR="/var/pcaps"
+LOG_DIR="/var/log/pcapture"
+
+mkdir -p "$PCAP_DIR"
+mkdir -p "$LOG_DIR"
+
+CURRENT_TIME=$(date +"%Y-%m-%d.%H")
+FILES=( "$PCAP_DIR"/"$CURRENT_TIME"* )
+
+if [[ -e "${FILES[0]}" ]]; then
+    MATCHING_FILE="${FILES[0]}"
+    echo "Found existing file: $MATCHING_FILE"
+else
+    echo "No file found"
+fi
