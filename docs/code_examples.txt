@@ -6,3 +6,12 @@ else
     echo "Not found"
 fi
 
+CURRENT_TIME=$(date +"%Y-%m-%d.%H")
+FILES=( "$PCAP_DIR"/"$CURRENT_TIME"* )
+
+if [[ -e "${FILES[0]}" ]]; then
+    MATCHING_FILE="${FILES[0]}"
+    echo "Found existing file: $MATCHING_FILE"
+else
+    echo "No file found"
+fi
