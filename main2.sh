@@ -67,29 +67,46 @@ if $SERVE; then
     fi
 fi
 #=============================================================================
-#???
 cleanup() {
     if [[ -n "${SERVER_PID:-}" ]] && kill -0 "$SERVER_PID" &>/dev/null; then
         log "Stopping HTTP server (PID: $SERVER_PID)"
         kill "$SERVER_PID"
     fi
+
+    if [[ -n "${CAPTURE_PID:-}" ]] && kill -0 "$CAPTURE_PID" &>/dev/null; then
+        log "Stopping $TOOL (PID: $CAPTURE_PID)"
+        kill "$CAPTURE_PID"
+    fi
+
+    exit 0
 }
 
-trap cleanup SIGINT
+trap cleanup SIGINT SIGTERM
 #=============================================================================
-#???
 # Handle the sanity check
+ARCHIVE_DIR="$PCAP_DIR/archive"
+mkdir -p "$ARCHIVE_DIR"
+
+for f in "$PCAP_DIR"/*.partial; do
+	[ -e "$f" ] || continue
+	ts=$(date +"%F_%H%M%S")
+	base=$(basename "$f")
+	newname="${base%.partial}_${ts}_$$.partial"
+	mv "$f" "$ARCHIVE_DIR/$newname"
+	log "Archived leftover partial file: $f -> $ARCHIVE_DIR/$newname"
+done
 
 case "$TOOL" in
     legacy)
-        ;;
+    	bin/legacy -k -i "$IFACE" -s "$PCAP_DIR" &
+	log "Starting legacy on $IFACE..."
+	;;
     tcpdump)
         if $ZIP; then
             tcpdump -i "$IFACE" -G 3600 -w "$PCAP_DIR/%Y-%m-%d.%H.pcap.gz" -nn -U &>/dev/null &
         else
             tcpdump -i "$IFACE" -G 3600 -w "$PCAP_DIR/%Y-%m-%d.%H.pcap" -nn -U &>/dev/null &
         fi
-        CAPTURE_PID=$!
         log "Starting tcpdump on $IFACE..."
         ;;
     tcpdump-pfring)
@@ -97,11 +114,14 @@ case "$TOOL" in
     xdpdump)
         ;;
     netsniff-ng)
-        ;;
+    	netsniff-ng -i "$IFACE" -o "$PCAP_DIR/%Y-%m-%d.%H.pcap" --interval 1hrs --prio-high --silent &>/dev/null &
+	log "Starting netsniff-ng on $IFACE..."
+	;;
     *)
         ;;
 esac
 
+CAPTURE_PID=$!
 wait $CAPTURE_PID
 
 # Failing with zip

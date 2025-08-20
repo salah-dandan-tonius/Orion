@@ -15,3 +15,13 @@ if [[ -e "${FILES[0]}" ]]; then
 else
     echo "No file found"
 fi
+
+IT WORKS!!!!!
+sudo tcpdump -i wlo1 -w ./capture.pcap &
+PID=$!
+
+echo "PID: $PID"
+sleep 5
+
+sudo kill -SIGINT "$PID"
+echo "tcpdump stopped."
