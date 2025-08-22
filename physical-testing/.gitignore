@@ -1,0 +1,7 @@
+# Ignore ALL test results (they're huge!)
+results/*
+!results/.gitkeep
+
+# Ignore any pcap files except the sample
+*.pcap
+!pcaps/capture.pcap

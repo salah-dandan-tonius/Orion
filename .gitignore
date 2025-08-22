@@ -1,0 +1,8 @@
+# Ignore large test results
+physical-testing/results/*.pcap
+physical-testing/results/*/*.pcap
+physical-testing/results/*/*.log
+*.pcap.gz
+
+# Keep directory structure
+!physical-testing/results/.gitkeep
