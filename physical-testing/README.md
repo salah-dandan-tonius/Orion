@@ -1,4 +1,3 @@
-cat > /srv/Orion/physical-testing/COMPLETE_DOCUMENTATION.md << 'EOF'
 # Physical Server Packet Capture Testing - Complete Documentation
 
 ## Quick Start Commands
